@@ -2,9 +2,9 @@ package task
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
-	"errors"
 	"time"
 )
 
@@ -19,6 +19,8 @@ type Task struct {
 func AddTask(desc string) {
 	task := []Task{}
 	status := "in-progress"
+	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
+	waktuWib := time.Now().In(zonaWaktu)
 	byteValue, err := os.ReadFile("task.json")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -45,13 +47,13 @@ func AddTask(desc string) {
 		Id: 1,
 		Description: desc,
 		Status: status,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: waktuWib,
+		UpdatedAt: waktuWib,
 	}
 
 	task = append(task, *newTask)
 
-	taskBytes, err := json.Marshal(task)
+	taskBytes, err := json.MarshalIndent(task, "", "  ")
 	if err != nil {
 		fmt.Println("Gagal encode", err)
 	}
