@@ -71,7 +71,6 @@ func AddTask(desc string) {
 		fmt.Println(err)
 	}
 	fmt.Println("Task berhasil ditambahkan (ID: %d)", newId)
-	
 }
 
 func ReadTaskFromJSON() {
@@ -106,4 +105,59 @@ func ReadTaskFromJSON() {
 		fmt.Println(values.UpdatedAt)
 
 	}
+}
+
+func UpdateTask(id int, desc string) {
+	var newId int
+	task := []Task{}
+	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
+	waktuWib := time.Now().In(zonaWaktu)
+	byteValue, err := os.ReadFile("task.json")
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println("File json tidak ditemukan, buat file baru")
+			dataJson := []byte{}
+			writeJson := os.WriteFile("task.json", dataJson, 0644)
+			if writeJson != nil {
+				fmt.Println("Gagal saat membuat file json", writeJson)
+			}
+			fmt.Println("File json telah berhasil dibuat")
+		} else {
+			fmt.Println("Error saat baca file", err)
+			return
+		}
+	} else {
+		err = json.Unmarshal(byteValue, &task)
+		if err != nil {
+			fmt.Println("Gagal decode file JSON", err)
+			return
+		}
+	}
+
+	for _, value := range task {
+		fmt.Println("task skrg", value)
+		if value.Id == id {
+			value.Description = desc
+			fmt.Println("deskripsi baruy", desc)
+			fmt.Println("yang dah direplace", value.Description)
+		}
+	}
+
+	newTask := &Task{
+		Description: desc,
+		UpdatedAt: waktuWib,
+	}
+
+	task = append(task, *newTask)
+
+	taskBytes, err := json.MarshalIndent(task, "", "  ")
+	if err != nil {
+		fmt.Println("Gagal encode", err)
+	}
+
+	err = os.WriteFile("task.json", taskBytes, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Task berhasil diupdate (ID: %d)", newId)
 }
