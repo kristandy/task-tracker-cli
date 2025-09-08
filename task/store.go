@@ -19,7 +19,7 @@ type Task struct {
 func AddTask(desc string) {
 	var newId int
 	task := []Task{}
-	status := "in-progress"
+	status := "todo"
 	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
 	waktuWib := time.Now().In(zonaWaktu)
 	byteValue, err := os.ReadFile("task.json")
@@ -70,10 +70,12 @@ func AddTask(desc string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("Task berhasil ditambahkan (ID: %d)", newId)
+	
 }
 
-func readTaskFromJSON() {
-	var task Task
+func ReadTaskFromJSON() {
+	var task []Task
 	byteValue, err := os.ReadFile("task.json")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -95,12 +97,13 @@ func readTaskFromJSON() {
 			return
 		}
 	}
-	
-	fmt.Println(task.Id)
-	fmt.Println(task.Description)
-	fmt.Println(task.Status)
-	fmt.Println(task.CreatedAt)
-	fmt.Println(task.UpdatedAt)
-}
 
-func writeTaskToJSON() {}
+	for _, values := range task {
+		fmt.Println(values.Id)
+		fmt.Println(values.Description)
+		fmt.Println(values.Status)
+		fmt.Println(values.CreatedAt)
+		fmt.Println(values.UpdatedAt)
+
+	}
+}

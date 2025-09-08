@@ -20,12 +20,9 @@ func main() {
 			return
 		}
 		deksripsiTugas := os.Args[2]
-		fmt.Println("ini deskripsi tugas", deksripsiTugas)
-		fmt.Println("ini os args", os.Args[0])
-		fmt.Println("ini os args", os.Args[1])
-		fmt.Println("ini os args", os.Args[2])
 		task.AddTask(deksripsiTugas)
-
+	case "list":
+		task.ReadTaskFromJSON()
 	}
 
 }
