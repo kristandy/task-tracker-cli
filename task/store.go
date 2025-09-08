@@ -17,6 +17,7 @@ type Task struct {
 }
 
 func AddTask(desc string) {
+	var newId int
 	task := []Task{}
 	status := "in-progress"
 	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
@@ -43,8 +44,15 @@ func AddTask(desc string) {
 		}
 	}
 
+	if len(task) == 0 {
+		newId = 1
+	} else {
+		lastElement := task[len(task)-1]
+		newId = lastElement.Id + 1
+	}
+
 	newTask := &Task{
-		Id: 1,
+		Id: newId,
 		Description: desc,
 		Status: status,
 		CreatedAt: waktuWib,
