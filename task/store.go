@@ -108,7 +108,6 @@ func ReadTaskFromJSON() {
 }
 
 func UpdateTask(id int, desc string) {
-	var newId int
 	task := []Task{}
 	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
 	waktuWib := time.Now().In(zonaWaktu)
@@ -133,22 +132,20 @@ func UpdateTask(id int, desc string) {
 			return
 		}
 	}
-
-	for _, value := range task {
+	targetIndex := -1
+	for index, value := range task {
 		fmt.Println("task skrg", value)
 		if value.Id == id {
-			value.Description = desc
+			targetIndex = index
 			fmt.Println("deskripsi baruy", desc)
 			fmt.Println("yang dah direplace", value.Description)
 		}
 	}
 
-	newTask := &Task{
-		Description: desc,
-		UpdatedAt: waktuWib,
+	if targetIndex != -1 {
+		task[targetIndex].Description = desc
+		task[targetIndex].UpdatedAt = waktuWib
 	}
-
-	task = append(task, *newTask)
 
 	taskBytes, err := json.MarshalIndent(task, "", "  ")
 	if err != nil {
@@ -159,5 +156,5 @@ func UpdateTask(id int, desc string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Task berhasil diupdate (ID: %d)", newId)
+	fmt.Printf("Task berhasil diupdate (ID: %d)", id)
 }
