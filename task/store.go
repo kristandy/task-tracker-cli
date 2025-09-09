@@ -70,10 +70,10 @@ func AddTask(desc string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Task berhasil ditambahkan (ID: %d)", newId)
+	fmt.Printf("Task berhasil ditambahkan (ID: %d)", newId)
 }
 
-func ReadTaskFromJSON() {
+func ReadTasks() {
 	var task []Task
 	byteValue, err := os.ReadFile("task.json")
 	if err != nil {
@@ -105,6 +105,59 @@ func ReadTaskFromJSON() {
 		fmt.Println(values.UpdatedAt)
 
 	}
+}
+
+func ReadTaskByStatus(status string) {
+
+}
+
+func UpdateStatus (id int, newStatus string) {
+	task := []Task{}
+	zonaWaktu, _ := time.LoadLocation("Asia/Jakarta")
+	waktuWib := time.Now().In(zonaWaktu)
+	byteValue, err := os.ReadFile("task.json")
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println("File json tidak ditemukan, buat file baru")
+			dataJson := []byte{}
+			writeJson := os.WriteFile("task.json", dataJson, 0644)
+			if writeJson != nil {
+				fmt.Println("Gagal saat membuat file json", writeJson)
+			}
+			fmt.Println("File json telah berhasil dibuat")
+		} else {
+			fmt.Println("Error saat baca file", err)
+			return
+		}
+	} else {
+		err = json.Unmarshal(byteValue, &task)
+		if err != nil {
+			fmt.Println("Gagal decode file JSON", err)
+			return
+		}
+	}
+	targetIndex := -1
+	for index, value := range task {
+		if value.Id == id {
+			targetIndex = index
+		}
+	}
+
+	if targetIndex != -1 {
+		task[targetIndex].Status = newStatus
+		task[targetIndex].UpdatedAt = waktuWib
+	}
+
+	taskBytes, err := json.MarshalIndent(task, "", "  ")
+	if err != nil {
+		fmt.Println("Gagal encode", err)
+	}
+
+	err = os.WriteFile("task.json", taskBytes, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Status task berhasil diupdate (ID: %d)", id)
 }
 
 func UpdateTask(id int, desc string) {
