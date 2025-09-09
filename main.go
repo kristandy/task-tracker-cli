@@ -21,10 +21,27 @@ func main() {
 			return
 		}
 		deksripsiTugas := os.Args[2]
-		fmt.Println("deksripsiTugas", deksripsiTugas)
 		task.AddTask(deksripsiTugas)
 	case "list":
-		task.ReadTasks()
+		if len (os.Args) < 2 {
+			task.ReadTasks()
+			return
+		} else {
+			statusTugas := os.Args[2]
+			if statusTugas == "done" {
+				task.ReadTaskByStatus(statusTugas)
+				return
+			} else if statusTugas == "todo" {
+				task.ReadTaskByStatus(statusTugas)
+				return
+			} else if statusTugas == "in-progress" {
+				task.ReadTaskByStatus(statusTugas)
+				return
+			} else {
+				fmt.Printf("Status %s tidak tersedia, gunakan status lain", statusTugas)
+				return
+			}
+		}
 	case "update":
 		if len(os.Args) < 4 {
 			fmt.Println("Tambahkan deskripsi baru dan id!")
@@ -49,7 +66,7 @@ func main() {
 			fmt.Println("ID harus berupa angka")
 			fmt.Println("Input yang diberikan: ", idString)
 		}
-		
+
 		statusTugasBaru := os.Args[1]
 		if statusTugasBaru == "mark-done" {
 			statusTugasBaru = "done"

@@ -108,7 +108,42 @@ func ReadTasks() {
 }
 
 func ReadTaskByStatus(status string) {
-
+	var task []Task
+	var listTask []Task
+	byteValue, err := os.ReadFile("task.json")
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println("File json tidak ditemukan, buat file baru")
+			dataJson := []byte("{}")
+			writeJson := os.WriteFile("task.json", dataJson, 0644)
+			if writeJson != nil {
+				fmt.Println("Gagal saat membuat file json", writeJson)
+			}
+			fmt.Println("File json telah berhasil dibuat")
+		} else {
+			fmt.Println("Error saat baca file", err)
+			return
+		}
+	} else {
+		err = json.Unmarshal(byteValue, &task)
+		if err != nil {
+			fmt.Println("Gagal decode file JSON", err)
+			return
+		}
+	}
+	
+	for _, values := range task {
+		if values.Status == status {
+			listTaskBaru := append(listTask, values)
+			for _, values := range listTaskBaru {
+				fmt.Println(values.Id)
+				fmt.Println(values.Description)
+				fmt.Println(values.Status)
+				fmt.Println(values.CreatedAt)
+				fmt.Println(values.UpdatedAt)
+			}
+		} 
+	}
 }
 
 func UpdateStatus (id int, newStatus string) {
